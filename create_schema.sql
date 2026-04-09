@@ -1,8 +1,6 @@
 -- create_schema.sql
 -- Creates all core tables for the gym management project.
 
-BEGIN;
-
 CREATE TABLE IF NOT EXISTS users (
     user_id          SERIAL PRIMARY KEY,
     username         VARCHAR(50)  NOT NULL UNIQUE,
@@ -43,5 +41,3 @@ CREATE TABLE IF NOT EXISTS gym_merch (
     merch_price        NUMERIC(10,2) NOT NULL CHECK (merch_price >= 0),
     quantity_in_stock  INT           NOT NULL DEFAULT 0 CHECK (quantity_in_stock >= 0)
 );
-
-COMMIT;

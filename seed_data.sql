@@ -1,9 +1,8 @@
 -- seed_data.sql
 -- Inserts sample records for development/testing.
 
-BEGIN;
-
 -- BCrypt hash below is a sample hash for password "password".
+
 INSERT INTO users (username, password_hash, email, phone_number, address, role)
 VALUES
     ('admin1',   '$2a$10$7EqJtq98hPqEX7fNZaFWoO5P6fO5Kb/6VQwWi4KFOeFHrgb3R04k6', 'admin1@gym.local',   '555-0001', '1 Admin Way',   'ADMIN'),
@@ -68,5 +67,3 @@ WHERE NOT EXISTS (SELECT 1 FROM gym_merch gm WHERE gm.merch_name = 'Resistance B
 INSERT INTO gym_merch (merch_name, merch_type, merch_price, quantity_in_stock)
 SELECT 'Energy Bar', 'Food', 2.99, 60
 WHERE NOT EXISTS (SELECT 1 FROM gym_merch gm WHERE gm.merch_name = 'Energy Bar');
-
-COMMIT;
