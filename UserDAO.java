@@ -98,6 +98,25 @@ public class UserDAO {
         }
     }
 
+    public boolean updateUser(User user) {
+        String sql = "UPDATE users SET username = ?, password_hash = ?, email = ?, phone_number = ?, address = ?, role = ? WHERE user_id = ?";
+
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPasswordHash());
+            statement.setString(3, user.getEmail());
+            statement.setString(4, user.getPhoneNumber());
+            statement.setString(5, user.getAddress());
+            statement.setString(6, user.getRole());
+            statement.setInt(7, user.getUserId());
+            return statement.executeUpdate() > 0;
+        } catch (SQLException exception) {
+            LOGGER.severe("Failed to update user by ID: " + exception.getMessage());
+            throw new RuntimeException("Failed to update user", exception);
+        }
+    }
+
     private boolean exists(String sql, String value) {
         try (Connection connection = DbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {

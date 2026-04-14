@@ -1,4 +1,5 @@
 // Console entry point and menu router.
+import java.sql.Connection;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
@@ -25,6 +26,10 @@ public class ConsoleApp {
 
     private void run() {
         LOGGER.info("Console application started");
+        if (!verifyDatabaseConnection()) {
+            return;
+        }
+
         while (true) {
             System.out.println();
             System.out.println("=== Gym Management ===");
@@ -116,6 +121,7 @@ public class ConsoleApp {
                 System.out.println("1. Browse workout classes");
                 System.out.println("2. Purchase membership");
                 System.out.println("3. View merch list");
+                System.out.println("4. View total membership expenses");
             }
 
             System.out.println("0. Logout");
@@ -155,6 +161,7 @@ public class ConsoleApp {
             System.out.println("2. Update merch price/stock");
             System.out.println("3. Print stock report");
             System.out.println("4. View total stock value");
+            System.out.println("5. Delete merch item");
             System.out.println("0. Back");
             System.out.print("Choose an option: ");
 
@@ -164,10 +171,51 @@ public class ConsoleApp {
                 case "2" -> handleUpdateMerchItem();
                 case "3" -> handleBrowseMerch();
                 case "4" -> handleViewTotalStockValue();
+                case "5" -> handleDeleteMerchItem();
                 case "0" -> {
                     return;
                 }
                 default -> System.out.println("Invalid option.");
+            }
+        }
+    }
+
+    private void handleDeleteMerchItem() {
+        try {
+            System.out.print("Merch ID to delete: ");
+            int merchId = readInt(scanner.nextLine(), "Merch ID must be a valid whole number");
+
+            GymMerch existing = gymMerchService.findById(merchId);
+            if (existing == null) {
+                System.out.println("Merch item not found.");
+                return;
+            }
+
+            System.out.println("1. Confirm delete");
+            System.out.println("0. Back");
+            System.out.print("Choose an option: ");
+            String confirm = scanner.nextLine().trim();
+
+            if ("0".equals(confirm)) {
+                System.out.println("Delete cancelled.");
+                return;
+            }
+
+            if (!"1".equals(confirm)) {
+                System.out.println("Invalid option.");
+                return;
+            }
+
+            boolean deleted = gymMerchService.deleteItem(merchId);
+            System.out.println(deleted ? "Merch item deleted." : "No merch item was deleted.");
+            if (deleted) {
+                LOGGER.info("Merch item deleted: id=" + merchId);
+            }
+        } catch (RuntimeException exception) {
+            System.out.println("Delete merch failed: " + exception.getMessage());
+            LOGGER.severe("Delete merch failed: " + exception.getMessage());
+            if (exception.getCause() != null) {
+                System.out.println("Cause: " + exception.getCause().getMessage());
             }
         }
     }
@@ -567,7 +615,20 @@ public class ConsoleApp {
             case "1" -> handleBrowseWorkoutClasses();
             case "2" -> handlePurchaseMembership(user);
             case "3" -> handleBrowseMerch();
+            case "4" -> handleViewTotalMembershipExpenses(user);
             default -> System.out.println("Invalid option.");
+        }
+    }
+
+    private void handleViewTotalMembershipExpenses(User user) {
+        try {
+            double totalExpenses = membershipService.getTotalMembershipExpensesForMember(user.getUserId());
+            System.out.println("Total membership expenses: $" + String.format("%.2f", totalExpenses));
+        } catch (RuntimeException exception) {
+            System.out.println("Unable to load membership expenses: " + exception.getMessage());
+            if (exception.getCause() != null) {
+                System.out.println("Cause: " + exception.getCause().getMessage());
+            }
         }
     }
 
@@ -733,6 +794,18 @@ public class ConsoleApp {
             return Double.parseDouble(value.trim());
         } catch (NumberFormatException exception) {
             throw new IllegalArgumentException(errorMessage);
+        }
+    }
+
+    private boolean verifyDatabaseConnection() {
+        try (Connection ignored = DbConnection.getConnection()) {
+            LOGGER.info("Database connection check succeeded at startup");
+            return true;
+        } catch (Exception exception) {
+            System.out.println("Startup failed: Could not connect to database.");
+            System.out.println("Please confirm PostgreSQL is running and credentials in DbConnection.java are correct.");
+            LOGGER.severe("Database connection check failed at startup: " + exception.getMessage());
+            return false;
         }
     }
 }

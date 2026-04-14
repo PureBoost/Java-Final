@@ -113,6 +113,24 @@ public class MembershipDAO {
         }
     }
 
+    public double getTotalExpensesByMemberId(int memberId) {
+        String sql = "SELECT COALESCE(SUM(membership_cost), 0) FROM memberships WHERE member_id = ?";
+
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, memberId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getDouble(1);
+                }
+                return 0;
+            }
+        } catch (SQLException exception) {
+            throw new RuntimeException("Failed to calculate membership expenses", exception);
+        }
+    }
+
     private Membership mapMembership(ResultSet resultSet) throws SQLException {
         Membership membership = new Membership();
         membership.setMembershipId(resultSet.getInt("membership_id"));

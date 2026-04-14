@@ -49,6 +49,13 @@ public class MembershipService {
         return membershipDAO;
     }
 
+    public double getTotalMembershipExpensesForMember(int memberId) {
+        if (memberId <= 0) {
+            throw new IllegalArgumentException("Member id must be greater than 0");
+        }
+        return membershipDAO.getTotalExpensesByMemberId(memberId);
+    }
+
     private boolean isBlank(String value) {
         return value == null || value.trim().isEmpty();
     }

@@ -32,6 +32,13 @@ public class GymMerchService {
         return gymMerchDAO.updateMerchItem(gymMerch);
     }
 
+    public boolean deleteItem(int merchId) {
+        if (merchId <= 0) {
+            throw new IllegalArgumentException("Merch ID must be greater than 0");
+        }
+        return gymMerchDAO.deleteMerchItem(merchId);
+    }
+
     public double getTotalStockValue() {
         return gymMerchDAO.getTotalStockValue();
     }
