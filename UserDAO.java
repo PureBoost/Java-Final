@@ -6,8 +6,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class UserDAO {
+    private static final Logger LOGGER = AppLogger.getLogger();
+
     public User createUser(User user) {
         String sql = "INSERT INTO users (username, password_hash, email, phone_number, address, role) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -29,6 +32,7 @@ public class UserDAO {
 
             return user;
         } catch (SQLException exception) {
+            LOGGER.severe("Failed to create user in database: " + exception.getMessage());
             throw new RuntimeException("Failed to create user", exception);
         }
     }
@@ -47,6 +51,7 @@ public class UserDAO {
                 return null;
             }
         } catch (SQLException exception) {
+            LOGGER.severe("Failed to find user by username: " + exception.getMessage());
             throw new RuntimeException("Failed to find user by username", exception);
         }
     }
@@ -71,6 +76,7 @@ public class UserDAO {
             }
             return users;
         } catch (SQLException exception) {
+            LOGGER.severe("Failed to load users from database: " + exception.getMessage());
             throw new RuntimeException("Failed to load users", exception);
         }
     }
@@ -81,8 +87,13 @@ public class UserDAO {
         try (Connection connection = DbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, userId);
-            return statement.executeUpdate() > 0;
+            boolean deleted = statement.executeUpdate() > 0;
+            if (deleted) {
+                LOGGER.info("Deleted user with ID=" + userId);
+            }
+            return deleted;
         } catch (SQLException exception) {
+            LOGGER.severe("Failed to delete user by ID: " + exception.getMessage());
             throw new RuntimeException("Failed to delete user", exception);
         }
     }
@@ -96,6 +107,7 @@ public class UserDAO {
                 return resultSet.next() && resultSet.getInt(1) > 0;
             }
         } catch (SQLException exception) {
+            LOGGER.severe("Failed to check existing value in users table: " + exception.getMessage());
             throw new RuntimeException("Failed to check existing value", exception);
         }
     }

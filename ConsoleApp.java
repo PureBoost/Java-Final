@@ -1,8 +1,10 @@
 // Console entry point and menu router.
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class ConsoleApp {
+    private static final Logger LOGGER = AppLogger.getLogger();
     private final Scanner scanner;
     private final UserService userService;
     private final MembershipService membershipService;
@@ -22,6 +24,7 @@ public class ConsoleApp {
     }
 
     private void run() {
+        LOGGER.info("Console application started");
         while (true) {
             System.out.println();
             System.out.println("=== Gym Management ===");
@@ -35,6 +38,7 @@ public class ConsoleApp {
                 case "1" -> handleRegister();
                 case "2" -> handleLogin();
                 case "3" -> {
+                    LOGGER.info("Application exit selected from main menu");
                     System.out.println("Goodbye.");
                     return;
                 }
@@ -62,8 +66,10 @@ public class ConsoleApp {
 
             User user = userService.register(username, password, email, phoneNumber, address, role);
             System.out.println("User created: " + user.getUsername() + " (" + user.getRole() + ")");
+            LOGGER.info("Registration completed in console flow for username=" + user.getUsername());
         } catch (RuntimeException exception) {
             System.out.println("Registration failed: " + exception.getMessage());
+            LOGGER.severe("Registration failed in console flow: " + exception.getMessage());
             if (exception.getCause() != null) {
                 System.out.println("Cause: " + exception.getCause().getMessage());
             }
@@ -81,9 +87,11 @@ public class ConsoleApp {
 
             User user = userService.login(username, password);
             System.out.println("Login successful. Welcome, " + user.getUsername() + ".");
+            LOGGER.info("Login successful in console flow for username=" + user.getUsername());
             showRoleMenu(user);
         } catch (RuntimeException exception) {
             System.out.println("Login failed: " + exception.getMessage());
+            LOGGER.severe("Login failed in console flow: " + exception.getMessage());
             if (exception.getCause() != null) {
                 System.out.println("Cause: " + exception.getCause().getMessage());
             }
@@ -116,6 +124,7 @@ public class ConsoleApp {
 
             if ("0".equals(choice)) {
                 System.out.println("Logged out.");
+                LOGGER.info("User logged out: username=" + user.getUsername() + ", role=" + user.getRole());
                 return;
             }
 
@@ -182,8 +191,10 @@ public class ConsoleApp {
 
             GymMerch created = gymMerchService.addItem(merch);
             System.out.println("Merch item added. ID: " + created.getMerchId());
+            LOGGER.info("Merch item added: id=" + created.getMerchId() + ", name=" + created.getMerchName());
         } catch (RuntimeException exception) {
             System.out.println("Add merch failed: " + exception.getMessage());
+            LOGGER.severe("Add merch failed: " + exception.getMessage());
             if (exception.getCause() != null) {
                 System.out.println("Cause: " + exception.getCause().getMessage());
             }
@@ -227,8 +238,12 @@ public class ConsoleApp {
 
             boolean updated = gymMerchService.updateItem(existing);
             System.out.println(updated ? "Merch item updated." : "No merch item was updated.");
+            if (updated) {
+                LOGGER.info("Merch item updated: id=" + existing.getMerchId());
+            }
         } catch (RuntimeException exception) {
             System.out.println("Update merch failed: " + exception.getMessage());
+            LOGGER.severe("Update merch failed: " + exception.getMessage());
             if (exception.getCause() != null) {
                 System.out.println("Cause: " + exception.getCause().getMessage());
             }
@@ -322,6 +337,7 @@ public class ConsoleApp {
             System.out.println(deleted ? "User deleted." : "No user found with that ID.");
         } catch (RuntimeException exception) {
             System.out.println("Delete user failed: " + exception.getMessage());
+            LOGGER.severe("Delete user failed: " + exception.getMessage());
             if (exception.getCause() != null) {
                 System.out.println("Cause: " + exception.getCause().getMessage());
             }
@@ -416,8 +432,10 @@ public class ConsoleApp {
 
             WorkoutClass created = workoutClassService.createClass(workoutClass);
             System.out.println("Workout class created. ID: " + created.getWorkoutClassId());
+            LOGGER.info("Workout class created: id=" + created.getWorkoutClassId() + ", trainerId=" + user.getUserId());
         } catch (RuntimeException exception) {
             System.out.println("Create class failed: " + exception.getMessage());
+            LOGGER.severe("Create class failed: " + exception.getMessage());
             if (exception.getCause() != null) {
                 System.out.println("Cause: " + exception.getCause().getMessage());
             }
@@ -472,8 +490,12 @@ public class ConsoleApp {
 
             boolean updated = workoutClassService.updateClass(existing);
             System.out.println(updated ? "Workout class updated." : "No class was updated.");
+            if (updated) {
+                LOGGER.info("Workout class updated: id=" + existing.getWorkoutClassId());
+            }
         } catch (RuntimeException exception) {
             System.out.println("Update class failed: " + exception.getMessage());
+            LOGGER.severe("Update class failed: " + exception.getMessage());
             if (exception.getCause() != null) {
                 System.out.println("Cause: " + exception.getCause().getMessage());
             }
@@ -500,8 +522,12 @@ public class ConsoleApp {
 
             boolean deleted = workoutClassService.deleteClass(classId, user.getUserId());
             System.out.println(deleted ? "Workout class deleted." : "No class was deleted.");
+            if (deleted) {
+                LOGGER.info("Workout class deleted: id=" + classId + ", trainerId=" + user.getUserId());
+            }
         } catch (RuntimeException exception) {
             System.out.println("Delete class failed: " + exception.getMessage());
+            LOGGER.severe("Delete class failed: " + exception.getMessage());
             if (exception.getCause() != null) {
                 System.out.println("Cause: " + exception.getCause().getMessage());
             }
@@ -684,8 +710,10 @@ public class ConsoleApp {
 
             Membership created = membershipService.purchaseMembership(membership);
             System.out.println("Membership purchased. ID: " + created.getMembershipId());
+            LOGGER.info("Membership purchased: id=" + created.getMembershipId() + ", memberId=" + user.getUserId());
         } catch (RuntimeException exception) {
             System.out.println("Membership purchase failed: " + exception.getMessage());
+            LOGGER.severe("Membership purchase failed: " + exception.getMessage());
             if (exception.getCause() != null) {
                 System.out.println("Cause: " + exception.getCause().getMessage());
             }

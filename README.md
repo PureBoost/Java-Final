@@ -21,3 +21,4 @@ CREATE DATABASE gym_management;
 - Roles used in the schema: `ADMIN`, `TRAINER`, `MEMBER`.
 - Passwords are stored as BCrypt hashes.
 - The seed script uses a sample hash for password `password`.
+- Application events/errors are logged to `GymApp.log` in the project root.

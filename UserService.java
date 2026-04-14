@@ -1,8 +1,11 @@
 // Service class for registration and login business logic.
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.logging.Logger;
+
 public class UserService {
     private final UserDAO userDAO;
+    private static final Logger LOGGER = AppLogger.getLogger();
 
     public UserService(UserDAO userDAO) {
         this.userDAO = userDAO;
@@ -30,7 +33,9 @@ public class UserService {
         user.setPhoneNumber(phoneNumber == null ? null : phoneNumber.trim());
         user.setAddress(address == null ? null : address.trim());
 
-        return userDAO.createUser(user);
+        User createdUser = userDAO.createUser(user);
+        LOGGER.info("Registered new user: username=" + createdUser.getUsername() + ", role=" + createdUser.getRole());
+        return createdUser;
     }
 
     public User login(String username, String password) {
@@ -40,13 +45,16 @@ public class UserService {
 
         User user = userDAO.findByUsername(username.trim());
         if (user == null) {
+            LOGGER.warning("Failed login attempt for unknown username: " + username.trim());
             throw new IllegalArgumentException("Invalid username or password");
         }
 
         if (!BCrypt.checkpw(password, user.getPasswordHash())) {
+            LOGGER.warning("Failed login attempt due to bad password: username=" + username.trim());
             throw new IllegalArgumentException("Invalid username or password");
         }
 
+        LOGGER.info("User logged in successfully: username=" + user.getUsername() + ", role=" + user.getRole());
         return user;
     }
 
