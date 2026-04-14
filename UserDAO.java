@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO {
     public User createUser(User user) {
@@ -55,6 +57,34 @@ public class UserDAO {
 
     public boolean emailExists(String email) {
         return exists("SELECT COUNT(*) FROM users WHERE email = ?", email);
+    }
+
+    public List<User> getAllUsers() {
+        String sql = "SELECT user_id, username, password_hash, email, phone_number, address, role FROM users ORDER BY user_id";
+
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            List<User> users = new ArrayList<>();
+            while (resultSet.next()) {
+                users.add(mapUser(resultSet));
+            }
+            return users;
+        } catch (SQLException exception) {
+            throw new RuntimeException("Failed to load users", exception);
+        }
+    }
+
+    public boolean deleteUserById(int userId) {
+        String sql = "DELETE FROM users WHERE user_id = ?";
+
+        try (Connection connection = DbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, userId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException exception) {
+            throw new RuntimeException("Failed to delete user", exception);
+        }
     }
 
     private boolean exists(String sql, String value) {

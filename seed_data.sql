@@ -35,7 +35,7 @@ WHERE u.username = 'trainer1'
     );
 
 INSERT INTO workout_classes (workout_class_type, workout_class_description, trainer_id, class_datetime, duration_minutes, capacity)
-SELECT 'HIIT', 'High-intensity interval training', u.user_id, CURRENT_TIMESTAMP + INTERVAL '1 day', 60, 25
+SELECT 'HIIT', 'everyday 12pm', u.user_id, CURRENT_DATE + TIME '12:00', 60, 25
 FROM users u
 WHERE u.username = 'trainer1'
     AND NOT EXISTS (
@@ -46,7 +46,7 @@ WHERE u.username = 'trainer1'
     );
 
 INSERT INTO workout_classes (workout_class_type, workout_class_description, trainer_id, class_datetime, duration_minutes, capacity)
-SELECT 'Yoga', 'Beginner-friendly yoga class', u.user_id, CURRENT_TIMESTAMP + INTERVAL '2 days', 50, 20
+SELECT 'Yoga', 'everyday 5pm', u.user_id, CURRENT_DATE + TIME '17:00', 50, 20
 FROM users u
 WHERE u.username = 'trainer1'
     AND NOT EXISTS (

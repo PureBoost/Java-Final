@@ -20,4 +20,4 @@ CREATE DATABASE gym_management;
 ## Notes
 - Roles used in the schema: `ADMIN`, `TRAINER`, `MEMBER`.
 - Passwords are stored as BCrypt hashes.
-- The seed script uses a known sample hash for password `password`.
+- The seed script uses a sample hash for password `password`.
