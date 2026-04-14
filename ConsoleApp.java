@@ -798,7 +798,8 @@ public class ConsoleApp {
     }
 
     private boolean verifyDatabaseConnection() {
-        try (Connection ignored = DbConnection.getConnection()) {
+        try (Connection connection = DbConnection.getConnection()) {
+            connection.getMetaData();
             LOGGER.info("Database connection check succeeded at startup");
             return true;
         } catch (Exception exception) {
