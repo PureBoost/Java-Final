@@ -20,6 +20,7 @@ public class ConsoleApp {
         this.gymMerchService = new GymMerchService(new GymMerchDAO());
     }
 
+    // Clicking "Run" worked before but I woke up today and it doesn't work anymore I have no idea why and I can't seem to fix it so use the method in README.md to run the program.
     public static void main(String[] args) {
         new ConsoleApp().run();
     }

@@ -1,0 +1,39 @@
+# Java build output
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+/target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Logs
+*.log
+*.lck
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.idea/
+*.iml
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# Environment / secrets
+.env
+.env.*
+*.key
+*.pem
