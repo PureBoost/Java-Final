@@ -4,8 +4,8 @@ This project documentation is separated by audience.
 
 ## Documentation
 
-- Product and User Documentation: [USER_GUIDE.md](USER_GUIDE.md)
-- Technical and Developer Documentation: [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)
+- Product and User Documentation: [UserDocumentation.md](UserDocumentation.md)
+- Technical and Developer Documentation: [DeveloperDocumentation.md](DeveloperDocumentation.md)
 
 ## Quick Start
 
